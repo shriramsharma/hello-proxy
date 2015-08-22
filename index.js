@@ -2,9 +2,6 @@ let http = require('http')
 let request = require('request')
 let path = require('path')
 let fs = require('fs')
-let logPath = argv.log && path.join(__dirname, argv.log)
-let getLogStream = ()=> logPath ? fs.createWriteStream(logPath) : process.stdout
-
 let argv = require('yargs')
     .default('host', '127.0.0.1')
         .argv
@@ -14,6 +11,9 @@ let argv = require('yargs')
 let port = argv.port || (argv.host === '127.0.0.1' ? 8000 : 80)
 
 let destinationUrl = argv.url || scheme + argv.host + ':' + port
+let logPath = argv.log && path.join(__dirname, argv.log)
+let logStream = logPath ? fs.createWriteStream(logPath) : process.stdoutt
+
 
 http.createServer((req, res) => {
 	    console.log(`Request received at: ${req.url}`)
@@ -37,7 +37,7 @@ http.createServer((req, res) => {
 	  }
 	  let options = {
 	  	headers: req.headers,
-		url: `http://${destinationUrl}${req.url}`
+		url: `${destinationUrl}${req.url}`
 	  }
 	options.method = req.method
 	let downstreamResponse = req.pipe(request(options))
